@@ -1,0 +1,41 @@
+{
+  "title": "楼梯几何实验室",
+  "version": "1.0",
+  "exportedAt": "2026-11-23T09:09:09.401Z",
+  "units": "尺寸 mm；面积 m²；角度 °",
+  "baseline": {
+    "height": 3000,
+    "risers": 16,
+    "tread": 280,
+    "width": 1100,
+    "landing": 1200,
+    "rise": 187.5,
+    "treads": 15,
+    "run": 4200,
+    "length": 5400,
+    "area": 5.94,
+    "pitch": 33.80795991004193,
+    "stride": 655
+  },
+  "current": {
+    "height": 3000,
+    "risers": 18,
+    "tread": 280,
+    "width": 1100,
+    "landing": 1200,
+    "rise": 166.66666666666666,
+    "treads": 17,
+    "run": 4760,
+    "length": 5960,
+    "area": 6.556,
+    "pitch": 30.762719534238915,
+    "stride": 613.3333333333333
+  },
+  "formulas": {
+    "rise": "H / n",
+    "run": "(n - 1) * b",
+    "area": "(L + p) * W / 1000000",
+    "pitch": "atan(h / b) * 180 / PI"
+  },
+  "scope": "单跑直梯几何外轮廓，含上平台、不含下平台；不包含结构、净空或规范审查"
+}

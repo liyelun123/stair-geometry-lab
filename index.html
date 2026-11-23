@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#183d4b">
+  <meta name="description" content="可离线使用的楼梯参数化几何实验：调整尺寸、查看三维体块、比较方案并导出展示图。">
+  <title>楼梯几何实验室 · Stair Study</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23183d4b'/%3E%3Cpath d='M12 49V37h13V25h13V13h14' fill='none' stroke='%23f1c49e' stroke-width='5'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="geometry.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+<div class="shell">
+  <header class="masthead">
+    <a class="brand" href="#" aria-label="楼梯几何实验室首页"><span class="brand-mark" aria-hidden="true">⌁</span><span>STUDIO / 01<small>空间 · 尺寸 · 选择</small></span></a>
+    <div class="header-note"><span class="online-dot"></span>本地运行 · 无需联网</div>
+  </header>
+  <section class="intro">
+    <div><p class="eyebrow">PARAMETRIC STAIR STUDY</p><h1>把一段楼梯，<span>想清楚。</span></h1><p class="lead">从尺寸到空间，看见每一次调整带来的变化。</p></div>
+    <div class="intro-side">楼梯几何实验室<span>单跑直梯 / 参数化模型</span></div>
+  </section>
+
+  <main class="workspace">
+    <aside class="panel controls" aria-label="模型参数">
+      <div class="section-title"><span class="section-no">01</span><h2>设定尺寸</h2><span class="unit-note">单位 mm</span></div>
+      <p class="panel-caption">先确定总高度，再选择如何分级。</p>
+      <form id="parameters" novalidate>
+        <div class="field"><div class="field-heading"><label for="height">层间高度 <i>H</i></label><div class="number-wrap"><input id="height" name="height" type="number" min="2400" max="4200" step="10" value="3000" required><span>mm</span></div></div><input id="height-range" aria-label="层间高度滑块" type="range" min="2400" max="4200" step="10" value="3000"><div class="range-labels"><span>2,400</span><span>4,200</span></div></div>
+        <div class="field"><div class="field-heading"><label for="risers">上升级数 <i>n</i></label><div class="number-wrap"><input id="risers" name="risers" type="number" min="12" max="24" step="1" value="18" required><span>级</span></div></div><input id="risers-range" aria-label="上升级数滑块" type="range" min="12" max="24" step="1" value="18"><div class="range-labels"><span>12</span><span>24</span></div></div>
+        <div class="field"><div class="field-heading"><label for="tread">踏步宽度 <i>b</i></label><div class="number-wrap"><input id="tread" name="tread" type="number" min="200" max="350" step="5" value="280" required><span>mm</span></div></div><input id="tread-range" aria-label="踏步宽度滑块" type="range" min="200" max="350" step="5" value="280"><div class="range-labels"><span>200</span><span>350</span></div></div>
+        <div class="field"><div class="field-heading"><label for="width">梯段净宽 <i>W</i></label><div class="number-wrap"><input id="width" name="width" type="number" min="800" max="1600" step="10" value="1100" required><span>mm</span></div></div><input id="width-range" aria-label="梯段净宽滑块" type="range" min="800" max="1600" step="10" value="1100"><div class="range-labels"><span>800</span><span>1,600</span></div></div>
+        <div class="field"><div class="field-heading"><label for="landing">上平台长度 <i>p</i></label><div class="number-wrap"><input id="landing" name="landing" type="number" min="800" max="1800" step="10" value="1200" required><span>mm</span></div></div><input id="landing-range" aria-label="上平台长度滑块" type="range" min="800" max="1800" step="10" value="1200"><div class="range-labels"><span>800</span><span>1,800</span></div></div>
+      </form>
+      <p class="error" id="input-error" role="alert" hidden></p>
+      <div class="preset-title">试试同高度的两种分法</div>
+      <div class="presets"><button type="button" id="preset16">16 级方案</button><button type="button" id="preset18">18 级方案</button><button type="button" id="reset" title="恢复初始尺寸和视角">重置</button></div>
+      <button type="button" id="save-baseline" class="button primary wide">保存当前尺寸为对照 A <span>↗</span></button>
+      <p class="micro-note">保存后再调参数，观察下方 A / B 对比。</p>
+    </aside>
+
+    <section class="model-area" aria-label="模型与计算结果">
+      <div class="panel viewer">
+        <div class="viewer-bar"><div class="section-title"><span class="section-no">02</span><h2>空间预览</h2></div><div class="viewer-actions"><label class="check-label"><input type="checkbox" id="dimensions" checked>尺寸</label><button type="button" id="view-reset">复位视角</button></div></div>
+        <div class="canvas-wrap"><canvas id="model" tabindex="0" aria-label="可旋转的楼梯三维模型；方向键旋转，加减键缩放"></canvas><div class="model-label"><span class="model-tag">LIVE MODEL</span><span id="model-summary">18 级 · 17 个梯段踏面</span></div><div class="model-hint">拖动旋转 · 滚轮缩放 · 方向键也可操作</div><div class="axis-key"><b>Y</b> 高度 &nbsp; <b>X</b> 长度 &nbsp; <b>Z</b> 宽度</div></div>
+        <div class="viewer-footer"><span id="demo-caption" aria-live="polite">一段直梯，连接两个标高。</span><div><button type="button" id="auto-demo" class="button small">▶ 30 秒自动演示</button><button type="button" id="export-png" class="button small dark">导出展示图 ↗</button></div></div>
+      </div>
+      <div class="metrics" aria-label="计算结果">
+        <article><p>每级高度 <i>h</i></p><div><strong id="metric-rise">166.7</strong><span>mm</span></div><small>总高度 ÷ 上升级数</small></article>
+        <article><p>梯段水平长 <i>L</i></p><div><strong id="metric-run">4.76</strong><span>m</span></div><small>不含上平台</small></article>
+        <article><p>平面占地</p><div><strong id="metric-area">6.56</strong><span>m²</span></div><small>含上平台，不含下平台</small></article>
+        <article><p>鼻口连线倾角</p><div><strong id="metric-pitch">30.8</strong><span>°</span></div><small>arctan（级高 ÷ 踏步宽度）</small></article>
+      </div>
+    </section>
+  </main>
+
+  <section class="lower-grid">
+    <article class="panel elevation-panel"><div class="section-title"><span class="section-no">03</span><h2>把模型还原成尺寸</h2><span class="unit-note">侧立面示意</span></div><canvas id="elevation" aria-label="楼梯侧立面与总高、水平长、平台长标注"></canvas><div class="formula-note"><span><i>h</i> = H / n</span><span><i>L</i> = (n − 1) × b</span><span><i>S</i> = (L + p) × W</span></div><p class="micro-note">顶层平台承接最后一级，因此 n 次上升对应 n − 1 个梯段踏面。</p></article>
+    <article class="panel compare-panel"><div class="section-title"><span class="section-no">04</span><h2>两种选择，一眼看清</h2><button type="button" id="export-data" class="text-button">导出参数</button></div><p class="panel-caption" id="compare-caption">A 为初始方案，B 为当前模型。可随时重新保存 A。</p><table><thead><tr><th>观察项</th><th>对照 A</th><th>当前 B</th><th>B − A</th></tr></thead><tbody id="comparison"></tbody></table><div class="insight" id="insight">增加上升级数，会同时改变每级高度与梯段长度。试试 16 级方案。</div></article>
+  </section>
+
+  <details class="panel explanation"><summary>这个小实验能说明什么？</summary><div class="explanation-grid"><div><h3>让取舍可见</h3><p>保持层间高度和踏步宽度不变，增加级数会降低每级高度，同时增加水平长度。模型把这两个变化放在同一视图里。</p></div><div><h3>几何模型的边界</h3><p>体块展示楼梯的外轮廓，不代表混凝土实体构造。本实验不计算配筋、承载力、净空、扶手，也不判断规范合规性。输入范围只是演示范围。</p></div><div><h3>可以继续做的验证</h3><p>用一组自己选择的尺寸手算，与页面结果逐项对照；再改变一个参数，说明模型为什么随之变化。</p></div></div></details>
+  <footer><span>楼梯几何实验室 <b>·</b> STUDY 01</span><span>AI 辅助开发的几何练习原型 / v1.0</span></footer>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+<noscript>请在浏览器中启用 JavaScript，以使用模型与计算功能。</noscript>
+</body>
+</html>
